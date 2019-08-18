@@ -5,4 +5,4 @@ import android.os.Parcelable
 import kotlinx.android.parcel.Parcelize
 
 @Parcelize
-data class Aluno (var nome: String = "", var sobrenome: String = "", var idade: Int = 0, var avatar : Int = 0) : Parcelable
+data class Aluno (var id: String = "", var nome: String = "", var sobrenome: String = "", var idade: Int = 0, var avatar : Int = 0) : Parcelable

@@ -22,12 +22,13 @@ class ListaUsuarios() : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_lista_usuarios)
 
+        setTitle("Lista de Alunos")
         val listaAlunos = intent.getParcelableArrayListExtra<Aluno>("Alunos")
         viewManager = LinearLayoutManager(this)
-        viewAdapter = MyAdapter(listaAlunos)
+        viewAdapter = MyAdapter(listaAlunos, progressBarLista)
 
         recyclerView = rvLista.apply{
-            setHasFixedSize(true)
+
             layoutManager = viewManager
             adapter = viewAdapter
         }

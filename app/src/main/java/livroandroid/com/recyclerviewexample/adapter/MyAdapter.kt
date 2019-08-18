@@ -1,19 +1,25 @@
 package livroandroid.com.recyclerviewexample.adapter
 
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ProgressBar
 import android.widget.Toast
+import livroandroid.com.recyclerviewexample.database.Database
 import androidx.recyclerview.widget.RecyclerView
+import kotlinx.android.synthetic.main.activity_lista_usuarios.view.*
+import kotlinx.android.synthetic.main.activity_main.view.*
+import kotlinx.android.synthetic.main.activity_main.view.progressBar
 import kotlinx.android.synthetic.main.listaview.view.*
 import livroandroid.com.recyclerviewexample.R
 import livroandroid.com.recyclerviewexample.entity.Aluno
 import java.util.ArrayList
 
-class MyAdapter(private val myDataset: ArrayList<Aluno>):RecyclerView.Adapter<MyAdapter.MyViewHolder>() {
+class MyAdapter(private val myDataset: ArrayList<Aluno>, private val progressBarLista: ProgressBar):RecyclerView.Adapter<MyAdapter.MyViewHolder>() {
 
-    private lateinit var contexto : Context
+    private lateinit var contexto :Context
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
 
@@ -27,10 +33,33 @@ class MyAdapter(private val myDataset: ArrayList<Aluno>):RecyclerView.Adapter<My
         holder.firstName.text = myDataset[position].nome
         holder.lastName.text = myDataset[position].sobrenome
         holder.avatarImage.setImageResource( myDataset[position].avatar)
+        holder.idade.text = myDataset[position].idade.toString()
 
-        holder.lista.setOnClickListener {
-            var pos = position + 1
-            Toast.makeText(contexto,"cliquei aqui $pos ", Toast.LENGTH_LONG).show()
+        //Caso o usuário clique no ícone para deletar um elemento da lista
+        holder.icDelete.setOnClickListener {
+
+            progressBarLista.visibility = View.VISIBLE
+            val result = Database().delete("users", myDataset[position].id  )
+
+            if (result != null){
+
+                result.addOnSuccessListener {
+
+                    progressBarLista.visibility = View.GONE
+                    myDataset.removeAt(position)
+                    this.notifyItemRemoved(position)
+                    Toast.makeText(contexto, "Aluno removido com sucesso!", Toast.LENGTH_LONG).show()
+
+                }.addOnFailureListener {
+
+                    progressBarLista.visibility = View.GONE
+                    Toast.makeText(contexto, "Houve erro na deleção do registro!", Toast.LENGTH_LONG).show()
+                    Log.d("APPERROR3", it.message)
+                }
+            }else{
+                progressBarLista.visibility = View.GONE
+                Toast.makeText(contexto, "Registro não existe no servidor!", Toast.LENGTH_LONG).show()
+            }
         }
     }
 
@@ -44,6 +73,9 @@ class MyAdapter(private val myDataset: ArrayList<Aluno>):RecyclerView.Adapter<My
         var lastName = itemView.txtLastName
         var avatarImage = itemView.imageView
         var lista = itemView.listaPessoa
+        var idade = itemView.txtIdade
+        var icEdit = itemView.ic_edit
+        var icDelete = itemView.ic_delete
 
     }
 }

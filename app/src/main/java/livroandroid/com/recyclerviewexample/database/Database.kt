@@ -1,16 +1,21 @@
 package livroandroid.com.recyclerviewexample.database
 
 
+import android.net.Uri
 import com.google.android.gms.tasks.Task
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.QuerySnapshot
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
+import com.google.firebase.storage.UploadTask
 
 class Database {
 
     //Acessando uma instância do Cloud Firestore a partir de uma Activity
     private val db = FirebaseFirestore.getInstance()
+    val storage = FirebaseStorage.getInstance()
+    val storageRef = storage.reference
 
     //Método para realizar a inclusão de um documento no banco de dados.
    fun incluir(collection: String, document : String, data: Any) :Task<*>{
@@ -47,6 +52,14 @@ class Database {
         val task = db.collection(collection).document(document).delete()
 
         return task;
+    }
+
+    //Função que armazena um arquivo de foto no Firebase Storage
+    fun armazenarFoto(pathString: String, uriFotoAluno: Uri) : UploadTask{
+
+        val task = storageRef.child(pathString).putFile(uriFotoAluno)
+
+        return task
     }
 }
 
